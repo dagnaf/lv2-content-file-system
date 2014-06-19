@@ -57,7 +57,7 @@ int getCMD() {
   return 0;
 }
 // 错误处理
-void errHandler(int e_type, const char *src, char *arg = "") {
+void errHandler(int e_type, const char *src, char *arg = (char *)"") {
   // 打印错误来源
   printf("%s: ", src);
   switch(e_type) {
