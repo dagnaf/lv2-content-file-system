@@ -1,23 +1,23 @@
-#ifndef INODE_H_INCLUDED
+ï»¿#ifndef INODE_H_INCLUDED
 #define INODE_H_INCLUDED
 
 #include <ctime>
 
 struct Inode
 {
-  int uid; // ËùÊôÓÃ»§ id
-  int type; // ÎÄ¼şÀàĞÍ
-  int permission; // ÎÄ¼şĞí¿É
-  int blocks; // ËùÕ¼ÅÌ¿é
-  int sz; // ÎÄ¼ş´óĞ¡
-  int link; // ÎÄ¼şÁ´½ÓÊı
-  time_t create_time; // ´´½¨Ê±¼ä
-  time_t modify_time; // ĞŞ¸ÄÊ±¼ä
-  int addr[13]; // ËùÕ¼ÅÌ¿éºÅ£¬0-9ÎªÖ±½ÓË÷Òı£¬10-12Îª¼ä½ÓË÷Òı£¨Î´ÊµÏÖ£©
-  Inode(); // ¿Õ³õÊ¼
-  Inode(int i, int t, int p); // ³õÊ¼»¯ ÓÃ»§id¡¢ÀàĞÍ¡¢Ğí¿ÉÈ¨
-  void print(); // ´òÓ¡
-  void update(int s); // ¸üĞÂ´óĞ¡
+  int uid; // æ‰€å±ç”¨æˆ· id
+  int type; // æ–‡ä»¶ç±»å‹
+  int permission; // æ–‡ä»¶è®¸å¯
+  int blocks; // æ‰€å ç›˜å—
+  int sz; // æ–‡ä»¶å¤§å°
+  int link; // æ–‡ä»¶é“¾æ¥æ•°
+  time_t create_time; // åˆ›å»ºæ—¶é—´
+  time_t modify_time; // ä¿®æ”¹æ—¶é—´
+  int addr[13]; // æ‰€å ç›˜å—å·ï¼Œ0-9ä¸ºç›´æ¥ç´¢å¼•ï¼Œ10-12ä¸ºé—´æ¥ç´¢å¼•ï¼ˆæœªå®ç°ï¼‰
+  Inode(); // ç©ºåˆå§‹
+  Inode(int i, int t, int p); // åˆå§‹åŒ– ç”¨æˆ·idã€ç±»å‹ã€è®¸å¯æƒ
+  void print(); // æ‰“å°
+  void update(int s); // æ›´æ–°å¤§å°
 };
 
 #endif // INODE_H_INCLUDED

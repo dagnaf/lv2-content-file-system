@@ -1,12 +1,12 @@
-#ifndef FILE_H_INCLUDED
+ï»¿#ifndef FILE_H_INCLUDED
 #define FILE_H_INCLUDED
 
-// ÎÄ¼ş½á¹¹£º×÷Îª ÓÃ»§¿Õ¼äÎÄ¼ş »ò ÓÃ»§¿Õ¼äÃû Ê¹ÓÃ
-// eg username,ufd0 »òÕß filename,inode0
+// æ–‡ä»¶ç»“æ„ï¼šä½œä¸º ç”¨æˆ·ç©ºé—´æ–‡ä»¶ æˆ– ç”¨æˆ·ç©ºé—´å ä½¿ç”¨
+// eg username,ufd0 æˆ–è€… filename,inode0
 struct File {
-  char name[14]; // ÎÄ¼şÃû»òÓÃ»§Ãû
-  int pt; // Ö¸Ïòi½Úµã»òufd
-  // ³õÊ¼»¯Ãû×ÖºÍÖ¸Õë
+  char name[14]; // æ–‡ä»¶åæˆ–ç”¨æˆ·å
+  int pt; // æŒ‡å‘ièŠ‚ç‚¹æˆ–ufd
+  // åˆå§‹åŒ–åå­—å’ŒæŒ‡é’ˆ
   void init(const char *s, int d);
 };
 

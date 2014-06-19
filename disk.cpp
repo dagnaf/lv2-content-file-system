@@ -1,4 +1,4 @@
-#include <cstring>
+ï»¿#include <cstring>
 #include <cstdio>
 #include <cstdlib>
 #include "disk.h"
@@ -6,59 +6,59 @@
 FILE *fd;
 SuperBlock superblock;
 MFD mfd;
-// ÅÌ¿éÎ»Ê¾Í¼ ºÍ i½ÚµãÎ»Ê¾Í¼
+// ç›˜å—ä½ç¤ºå›¾ å’Œ ièŠ‚ç‚¹ä½ç¤ºå›¾
 int bitmap_block[BLOCK_BITMAP_WORD];
 int bitmap_inode[INODE_BITMAP_WORD];
 
-char cmd[25]; // ÃüÁîÍ·£¬ÀıÈçcreate -u abc£¬ÃüÁîÍ·¾ÍÊÇcreate
-char line[100]; // ÊäÈëµÄÃüÁîÕûĞĞ
-char *tokens[10]; // ·Ö¸ô¿Õ¸ñºóµÄÃüÁîµ¥´Ê
-int num_tokens; // µ¥´Ê¸öÊı
-char cwd[50]; // µ±Ç°Â·¾¶
-int uid; // µ±Ç°µÇÂ½µÄÓÃ»§id£¬-1±íÊ¾Î´µÇÂ½
-int cuid; // ±íÊ¾µ±Ç°ËùÔÚÎÄ¼ş¼ĞÊÇÊôÓÚÄÄ¸öÓÃ»§µÄ
-// ÊÂÀıÎÄ×Ö£¬ÓÃÓÚĞ´²Ù×÷
+char cmd[25]; // å‘½ä»¤å¤´ï¼Œä¾‹å¦‚create -u abcï¼Œå‘½ä»¤å¤´å°±æ˜¯create
+char line[100]; // è¾“å…¥çš„å‘½ä»¤æ•´è¡Œ
+char *tokens[10]; // åˆ†éš”ç©ºæ ¼åçš„å‘½ä»¤å•è¯
+int num_tokens; // å•è¯ä¸ªæ•°
+char cwd[50]; // å½“å‰è·¯å¾„
+int uid; // å½“å‰ç™»é™†çš„ç”¨æˆ·idï¼Œ-1è¡¨ç¤ºæœªç™»é™†
+int cuid; // è¡¨ç¤ºå½“å‰æ‰€åœ¨æ–‡ä»¶å¤¹æ˜¯å±äºå“ªä¸ªç”¨æˆ·çš„
+// äº‹ä¾‹æ–‡å­—ï¼Œç”¨äºå†™æ“ä½œ
 char sample[BLOCK_SZ] = "sample text\n";
-// ¶Á²Ù×÷µÄ»º³åÊı×é
+// è¯»æ“ä½œçš„ç¼“å†²æ•°ç»„
 char buf[BLOCK_SZ];
 
-// ¶Á´ÅÅÌ
+// è¯»ç£ç›˜
 void iread(void *obj, int sz, long offset, int cl, const char *mode) {
-  // Èç¹ûÎÄ¼şÎ´´ò¿ª£¬Ôò´ò¿ª
+  // å¦‚æœæ–‡ä»¶æœªæ‰“å¼€ï¼Œåˆ™æ‰“å¼€
   if (fd == NULL) fd = fopen(VDISK, mode);
-  // ÉèÖÃ¶ÁÈ¡ÎÄ¼şÊ±µÄÆ«ÒÆÎ»ÖÃoffset£¬seek_setÎªÎÄ¼ş¿ªÊ¼
-  // ¼´½«¶ÁÖ¸Õë Ö¸Ïò ÎÄ¼ş¿ªÊ¼ºóµÄoffset¸ö×Ö½Ú´¦
+  // è®¾ç½®è¯»å–æ–‡ä»¶æ—¶çš„åç§»ä½ç½®offsetï¼Œseek_setä¸ºæ–‡ä»¶å¼€å§‹
+  // å³å°†è¯»æŒ‡é’ˆ æŒ‡å‘ æ–‡ä»¶å¼€å§‹åçš„offsetä¸ªå­—èŠ‚å¤„
   fseek(fd, offset, SEEK_SET);
-  // ´ÓÎÄ¼ş¶ÁÖ¸Õë¿ªÊ¼¶ÁÈ¡sz¸ö×Ö½Ú
+  // ä»æ–‡ä»¶è¯»æŒ‡é’ˆå¼€å§‹è¯»å–szä¸ªå­—èŠ‚
   fread(obj, sz, 1, fd);
-  // Èç¹ûÒª¹Ø±ÕÎÄ¼ş£¬Ôò¹Ø±Õ
+  // å¦‚æœè¦å…³é—­æ–‡ä»¶ï¼Œåˆ™å…³é—­
   if (cl) iclose();
 }
-// Ğ´´ÅÅÌ
+// å†™ç£ç›˜
 void iwrite(void *obj, int sz, long offset, int cl, const char *mode) {
-  // »ù±¾Í¬¶Á´ÅÅÌ
+  // åŸºæœ¬åŒè¯»ç£ç›˜
   if (fd == NULL) fd = fopen(VDISK, mode);
   fseek(fd, offset, SEEK_SET);
   fwrite(obj, sz, 1, fd);
   if (cl) iclose();
 }
-// ¹Ø±ÕÎÄ¼ş
+// å…³é—­æ–‡ä»¶
 void iclose() {
   fclose(fd); fd = NULL;
 }
-// »ñÈ¡ÃüÁî
+// è·å–å‘½ä»¤
 int getCMD() {
   num_tokens = 1;
-  fgets(line, 100, stdin); // ´Ó±ê×¼ÊäÈë»ñµÃÒ»ĞĞ
-  // Èç¹ûÎª¿Õ´®£¬·µ»Ø1±íÊ¾
+  fgets(line, 100, stdin); // ä»æ ‡å‡†è¾“å…¥è·å¾—ä¸€è¡Œ
+  // å¦‚æœä¸ºç©ºä¸²ï¼Œè¿”å›1è¡¨ç¤º
   if ((tokens[0] = strtok(line, " \n\t")) == NULL) return 1;
-  // ·ñÔò¼ÌĞø»ñÈ¡µ¥´Ê
+  // å¦åˆ™ç»§ç»­è·å–å•è¯
   while ((tokens[num_tokens] = strtok(NULL, " \t\n")) != NULL) ++num_tokens;
   return 0;
 }
-// ´íÎó´¦Àí
+// é”™è¯¯å¤„ç†
 void errHandler(int e_type, const char *src, char *arg = (char *)"") {
-  // ´òÓ¡´íÎóÀ´Ô´
+  // æ‰“å°é”™è¯¯æ¥æº
   printf("%s: ", src);
   switch(e_type) {
     case e_max: printf("max sized\n"); break;
@@ -67,15 +67,15 @@ void errHandler(int e_type, const char *src, char *arg = (char *)"") {
     default: printf("error\n"); break;
   }
 }
-// °²×°
+// å®‰è£…
 void install() {
   printf("installing ...\n");
   fd = fopen(VDISK, "wb");
-  if (fd == NULL) { // ÎÄ¼ş²»ÄÜ´´½¨£¬ÖØĞÂÍË³öºóÔÙ³¢ÊÔ
+  if (fd == NULL) { // æ–‡ä»¶ä¸èƒ½åˆ›å»ºï¼Œé‡æ–°é€€å‡ºåå†å°è¯•
     printf("cannot install file system, restart program\n");
     exit(1);
   }
-  // ³õÊ¼»¯´ÅÅÌÖĞµÄÄÚÈİ£¬ÀıÈç³¬¼¶¿éÖĞ´ÅÅÌ»®·ÖµÄÖ¸Õë£¬¸ùÄ¿Â¼ÇøµÄadminµÈ
+  // åˆå§‹åŒ–ç£ç›˜ä¸­çš„å†…å®¹ï¼Œä¾‹å¦‚è¶…çº§å—ä¸­ç£ç›˜åˆ’åˆ†çš„æŒ‡é’ˆï¼Œæ ¹ç›®å½•åŒºçš„adminç­‰
   superblock.init();
   iwrite(&superblock, BLOCK_SZ, superblock.sb, 0);
   mfd.init();
@@ -91,28 +91,28 @@ void install() {
 void init() {
   printf("setting up ...\n");
   fd = fopen(VDISK, "rb+");
-  if (fd == NULL) { // ÎŞ·¨´ò¿ªÎÄ¼ş£¬ ÌáÊ¾°²×°
+  if (fd == NULL) { // æ— æ³•æ‰“å¼€æ–‡ä»¶ï¼Œ æç¤ºå®‰è£…
     printf("file system not installed, ready to install? <y/n> ");
     if (getCMD() == 0 && strcmp(tokens[0], "y") == 0) install();
     else {
       printf("file system must be installed first\n");
       exit(1);
     }
-    // °²×°Íê³É£¬ÖØĞÂ´ò¿ª
+    // å®‰è£…å®Œæˆï¼Œé‡æ–°æ‰“å¼€
     fd = fopen(VDISK, "rb");
     if (fd == NULL) {
       printf("fail to open disk, restart file system\n");
       exit(1);
     }
   }
-  // ¶ÁÈ¡³õÊ¼»¯¹ıµÄ´ÅÅÌÊı¾İ£¬°üÀ¨³¬¼¶¿éµÈ
+  // è¯»å–åˆå§‹åŒ–è¿‡çš„ç£ç›˜æ•°æ®ï¼ŒåŒ…æ‹¬è¶…çº§å—ç­‰
   iread(&superblock, sizeof(superblock), superblock.sb, 0);
   iread(&mfd, MFD_SZ, superblock.mfd, 0);
   iread(bitmap_inode, INODE_BITMAP_SZ, superblock.inode_bitmap, 0);
   iread(bitmap_block, BLOCK_BITMAP_SZ, superblock.block_bitmap);
-  strcpy(cwd, "/root"); // ÉèÖÃµ±Ç°Â·¾¶
+  strcpy(cwd, "/root"); // è®¾ç½®å½“å‰è·¯å¾„
   printf("welcome\n");
-  uid = -1; cuid = -1; // ÉèÖÃÎ´µÇÂ½£¬µ±Ç°ÓÃ»§ºÍµ±Ç°Ä¿Â¼ËùÔÚÓÃ»§Îª¿Õ
+  uid = -1; cuid = -1; // è®¾ç½®æœªç™»é™†ï¼Œå½“å‰ç”¨æˆ·å’Œå½“å‰ç›®å½•æ‰€åœ¨ç”¨æˆ·ä¸ºç©º
 }
 void infoSys() {
     int used;
@@ -128,17 +128,17 @@ void prompt() {
   if (uid != -1) printf("%s@local ", mfd.users[uid].name);
   printf("%s $ ", cwd);
 }
-// ÏÔÊ¾ÓÃ»§¿Õ¼äËùÓĞÎÄ¼ş
+// æ˜¾ç¤ºç”¨æˆ·ç©ºé—´æ‰€æœ‰æ–‡ä»¶
 void showDir() {
-  int flag = 0; // ±ê¼ÇÊÇ·ñÎª¿Õ
-  if (strcmp(cwd, "/root") == 0) { // ÔÚ¸ùÄ¿Â¼ÇøÔòÏÔÊ¾ËùÓĞÓÃ»§Ãû
+  int flag = 0; // æ ‡è®°æ˜¯å¦ä¸ºç©º
+  if (strcmp(cwd, "/root") == 0) { // åœ¨æ ¹ç›®å½•åŒºåˆ™æ˜¾ç¤ºæ‰€æœ‰ç”¨æˆ·å
     for (int i = 0; i < MAX_USER; ++i) {
       if (mfd.users[i].pt != -1) {
         flag = 1;
         printf("\t<dir>\t%s\n", mfd.users[i].name);
       }
     }
-  } else { // ·ñÔòÏÔÊ¾µ±Ç°Ä¿Â¼ÏÂµÄËùÓĞÎÄ¼ş
+  } else { // å¦åˆ™æ˜¾ç¤ºå½“å‰ç›®å½•ä¸‹çš„æ‰€æœ‰æ–‡ä»¶
     UFD ufd;
     iread(&ufd, UFD_SZ, superblock.ufd+UFD_SZ*cuid);
     for (int i = 0; i < MAX_FILE; ++i) {
@@ -148,29 +148,29 @@ void showDir() {
       }
     }
   }
-  // Èç¹ûÄ¿Â¼Îª¿Õ£¬ÏÔÊ¾¿Õ
+  // å¦‚æœç›®å½•ä¸ºç©ºï¼Œæ˜¾ç¤ºç©º
   if (!flag) printf("empty\n");
 }
-// µÇÂ½£¬ÔİÊ±²»ĞèÒªÃÜÂë
+// ç™»é™†ï¼Œæš‚æ—¶ä¸éœ€è¦å¯†ç 
 void login() {
   if (tokens[1] != NULL) {
     int new_uid = mfd.login(tokens[1]);
     if (new_uid >= 0) {
-      uid = new_uid; cuid = uid; // µÇÂ½µÄÍ¬Ê±½øÈëÏàÓ¦µÇÂ½µÄÄ¿Â¼
+      uid = new_uid; cuid = uid; // ç™»é™†çš„åŒæ—¶è¿›å…¥ç›¸åº”ç™»é™†çš„ç›®å½•
       strcpy(cwd, "/root/");
       strcat(cwd, tokens[1]);
     } else printf("login: username not found\n");
   } else printf("login: lonin username\n");
 }
-// ÉêÇëÒ»¸ö¿ÕÏĞµÄi½Úµã
+// ç”³è¯·ä¸€ä¸ªç©ºé—²çš„ièŠ‚ç‚¹
 int newInode() {
   for (int i = 0; i < MAX_USER*MAX_FILE; ++i) {
     int r = i / WORD_LEN;
     int c = i % WORD_LEN;
     if (((bitmap_inode[r]) & (1 << c)) == 0) {
-      bitmap_inode[r] |= (1 << c); // ÉêÇë³É¹¦£¬ÖÃ1
-      superblock.inode_cap--; // Í¬Ê±ÏµÍ³i½ÚµãÊı¼õÉÙ1
-      // Ğ´»Ø´ÅÅÌ±£´æĞÅÏ¢
+      bitmap_inode[r] |= (1 << c); // ç”³è¯·æˆåŠŸï¼Œç½®1
+      superblock.inode_cap--; // åŒæ—¶ç³»ç»ŸièŠ‚ç‚¹æ•°å‡å°‘1
+      // å†™å›ç£ç›˜ä¿å­˜ä¿¡æ¯
       iwrite(&superblock, BLOCK_SZ, superblock.sb, 0);
       iwrite(&bitmap_inode[r], sizeof(int), superblock.inode_bitmap+r*sizeof(int));
       return i;
@@ -178,27 +178,27 @@ int newInode() {
   }
   return -1;
 }
-// ´´½¨ÓÃ»§
+// åˆ›å»ºç”¨æˆ·
 void createUser() {
   int e = mfd.add(tokens[2]);
   if (e == 0) iwrite(&mfd, MFD_BLOCKS * BLOCK_SZ, superblock.mfd);
   else errHandler(e, "create", tokens[2]);
 }
-// ´´½¨ÎÄ¼ş
+// åˆ›å»ºæ–‡ä»¶
 void createFile() {
-  UFD new_ufd; // Ê×ÏÈ¶ÁÈ¡µ±Ç°Ä¿Â¼µÄÎÄ¼şÄ¿Â¼
+  UFD new_ufd; // é¦–å…ˆè¯»å–å½“å‰ç›®å½•çš„æ–‡ä»¶ç›®å½•
   iread(&new_ufd, UFD_SZ, superblock.ufd+UFD_SZ*cuid);
-  int e = new_ufd.add(tokens[1]); // ÔÚ¸ÃÄ¿Â¼ÏÂÌí¼ÓÎÄ¼ş
-  if (e == 0) iwrite(&new_ufd, UFD_SZ, superblock.ufd+cuid*UFD_SZ); // ·ñÔòĞ´Èë
-  else errHandler(e, "create", tokens[1]); // Èç¹ûÓĞ´í£¬ÀıÈçÖØÃûµÈ£¬ÌáÊ¾
+  int e = new_ufd.add(tokens[1]); // åœ¨è¯¥ç›®å½•ä¸‹æ·»åŠ æ–‡ä»¶
+  if (e == 0) iwrite(&new_ufd, UFD_SZ, superblock.ufd+cuid*UFD_SZ); // å¦åˆ™å†™å…¥
+  else errHandler(e, "create", tokens[1]); // å¦‚æœæœ‰é”™ï¼Œä¾‹å¦‚é‡åç­‰ï¼Œæç¤º
 }
-// ´´½¨ÃüÁî
+// åˆ›å»ºå‘½ä»¤
 void create() {
   if (tokens[1] != NULL) {
-    if (strcmp(tokens[1], "-u") == 0) { // Èç¹ûÊÇcreate -u µÄÀàĞÍÔò±íÊ¾´´½¨ÓÃ»§¡£
+    if (strcmp(tokens[1], "-u") == 0) { // å¦‚æœæ˜¯create -u çš„ç±»å‹åˆ™è¡¨ç¤ºåˆ›å»ºç”¨æˆ·ã€‚
       if (tokens[2] == NULL) {
         printf("create: create -u username | filename\n");
-      } else { // ±ØĞëÓÉadminÀ´´´½¨
+      } else { // å¿…é¡»ç”±adminæ¥åˆ›å»º
         if (uid != 0) printf("no permission\n");
         else createUser();
       }
@@ -208,20 +208,20 @@ void create() {
     }
   } else printf("create: create -u username | filename\n");
 }
-// ¸Ä±äÂ·¾¶
+// æ”¹å˜è·¯å¾„
 void change() {
-  if (uid != 0) { // ²»ÊÇadmin¾Í²»ÄÜ¸Ä±äÂ·¾¶£¬ÒòÎªÄ¿Â¼×Ü¹²Ö»ÓĞ2¼¶
+  if (uid != 0) { // ä¸æ˜¯adminå°±ä¸èƒ½æ”¹å˜è·¯å¾„ï¼Œå› ä¸ºç›®å½•æ€»å…±åªæœ‰2çº§
     printf("cd: no such directory\n");
-  } else if (tokens[1] == NULL) { // ²ÎÊıÎª¿Õ·µ»Ø¸úÄ¿Â¼
-    strcpy(cwd, "/root"); cuid = -1; // Í¬Ê±µ±Ç°Ä¿Â¼²»ÊôÓÚÈÎºÎÓÃ»§
+  } else if (tokens[1] == NULL) { // å‚æ•°ä¸ºç©ºè¿”å›è·Ÿç›®å½•
+    strcpy(cwd, "/root"); cuid = -1; // åŒæ—¶å½“å‰ç›®å½•ä¸å±äºä»»ä½•ç”¨æˆ·
   } else {
-    if (strcmp(tokens[1], "..") == 0) { // .. ·µ»ØÉÏ1¼¶
-      strcpy(cwd, "/root"); cuid = -1; // Í¬Ê±µ±Ç°Ä¿Â¼²»ÊôÓÚÈÎºÎÓÃ»§
+    if (strcmp(tokens[1], "..") == 0) { // .. è¿”å›ä¸Š1çº§
+      strcpy(cwd, "/root"); cuid = -1; // åŒæ—¶å½“å‰ç›®å½•ä¸å±äºä»»ä½•ç”¨æˆ·
     } else if (strcmp(tokens[1], ".") == 0) {
     } else {
-      if (strcmp(cwd, "/root") == 0) { // Èç¹ûµ±Ç°ÊÇ¸ùÄ¿Â¼
-        int new_uid = mfd.find(tokens[1]); // ²ÎÊıÈç¹ûÊÇÒÑ¾­´æÔÚ¶ÔÓ¦µÄÓÃ»§ÎÄ¼ş¼Ğ
-        if (new_uid >= 0) { // ÄÇÃ´¿ÉÒÔ½øÈë
+      if (strcmp(cwd, "/root") == 0) { // å¦‚æœå½“å‰æ˜¯æ ¹ç›®å½•
+        int new_uid = mfd.find(tokens[1]); // å‚æ•°å¦‚æœæ˜¯å·²ç»å­˜åœ¨å¯¹åº”çš„ç”¨æˆ·æ–‡ä»¶å¤¹
+        if (new_uid >= 0) { // é‚£ä¹ˆå¯ä»¥è¿›å…¥
           cuid = new_uid;
           strcat(cwd, "/"); strcat(cwd, tokens[1]);
         } else printf("cd: no such directory\n");
@@ -229,7 +229,7 @@ void change() {
     }
   }
 }
-// ÊÍ·Åi½Úµã
+// é‡Šæ”¾ièŠ‚ç‚¹
 void deleteInode(int x) {
   int r = x / WORD_LEN;
   int c = x % WORD_LEN;
@@ -239,7 +239,7 @@ void deleteInode(int x) {
   iwrite(&superblock, superblock.sb, BLOCK_SZ, 0);
   iwrite(&bitmap_inode[r], sizeof(int), superblock.inode_bitmap+r*sizeof(int));
 }
-// ÊÍ·Åi½Úµã£¬Í¬Ê±ÊÍ·Åi½ÚµãaddrËùÕ¼ÓĞµÄÅÌ¿é
+// é‡Šæ”¾ièŠ‚ç‚¹ï¼ŒåŒæ—¶é‡Šæ”¾ièŠ‚ç‚¹addræ‰€å æœ‰çš„ç›˜å—
 void deleteBlock(Inode inode) {
   int r, c, flag = 0;
   for (int i = 0; i < inode.blocks; ++i) {
@@ -255,15 +255,15 @@ void deleteBlock(Inode inode) {
   if (!flag) return;
   iwrite(bitmap_block, BLOCK_BITMAP_BLOCKS * BLOCK_SZ, superblock.block_bitmap);
 }
-// É¾³ıÓÃ»§
+// åˆ é™¤ç”¨æˆ·
 void delUser() {
   int e = mfd.del(tokens[2]);
-  if (e == 0) { // µ±ÓÃ»§Ä¿Â¼²»¿ÕÊ±²»ÄÜÉ¾³ı
+  if (e == 0) { // å½“ç”¨æˆ·ç›®å½•ä¸ç©ºæ—¶ä¸èƒ½åˆ é™¤
     iwrite(&mfd, MFD_BLOCKS * BLOCK_SZ, superblock.mfd);
     strcpy(cwd, "/root");
   } else errHandler(e, "delete", tokens[2]);
 }
-// É¾³ıÎÄ¼ş
+// åˆ é™¤æ–‡ä»¶
 void delFile() {
   UFD ufd;
   iread(&ufd, UFD_SZ, superblock.ufd+cuid*UFD_SZ);
@@ -271,7 +271,7 @@ void delFile() {
   if (e == 0) iwrite(&ufd, UFD_SZ, superblock.ufd+cuid*UFD_SZ);
   else errHandler(e, "delete", tokens[1]);
 }
-// É¾³ıÃüÁî
+// åˆ é™¤å‘½ä»¤
 void del() {
   if (tokens[1] != NULL) {
     if (strcmp(tokens[1], "-u") == 0) {
@@ -292,11 +292,11 @@ void del() {
     printf("delete: delete -u username | filename\n");
   }
 }
-// ÌáÊ¾ĞÅÏ¢£¬Èç¹ûÎŞ²ÎÊı×ªÖÁinfoSys£¬·ñÔòÔÚ¸Ãº¯ÊıÖĞÏÔÊ¾ÎÄ¼şĞÅÏ¢
+// æç¤ºä¿¡æ¯ï¼Œå¦‚æœæ— å‚æ•°è½¬è‡³infoSysï¼Œå¦åˆ™åœ¨è¯¥å‡½æ•°ä¸­æ˜¾ç¤ºæ–‡ä»¶ä¿¡æ¯
 void info() {
   if (tokens[1] == NULL) infoSys();
   else {
-    UFD ufd; // Ê×ÏÈ²éÕÒÎÄ¼şÊÇ·ñ´æÔÚ
+    UFD ufd; // é¦–å…ˆæŸ¥æ‰¾æ–‡ä»¶æ˜¯å¦å­˜åœ¨
     iread(&ufd, UFD_SZ, superblock.ufd+cuid*UFD_SZ);
     int fid = ufd.find(tokens[1]);
     if (fid >= 0) {
@@ -307,7 +307,7 @@ void info() {
     } else errHandler(e_not, "info", tokens[1]);
   }
 }
-// ÉêÇë¿ÕµÄÅÌ¿é
+// ç”³è¯·ç©ºçš„ç›˜å—
 int newBlock(int id) {
   int st = superblock.data/BLOCK_SZ;
   for (int i = (id+1) % BLOCKS; i != id; i = (i+1) % BLOCKS) {
@@ -322,24 +322,24 @@ int newBlock(int id) {
   }
   return -1;
 }
-// ¸´ÖÆÃüÁî
+// å¤åˆ¶å‘½ä»¤
 void cp() {
   if (cuid == -1) printf("copy: cannot copy file at root\n");
   else if (tokens[1] == NULL || tokens[2] == NULL) {
     printf("copy: copy copyfilename srcfilename eg copy 1.txt 2.txt\n");
   } else {
-    UFD ufd; // Ê×ÏÈ¶ÁÈ¡µ±Ç°Ä¿Â¼ÏÂµÄÎÄ¼ş
+    UFD ufd; // é¦–å…ˆè¯»å–å½“å‰ç›®å½•ä¸‹çš„æ–‡ä»¶
     iread(&ufd, UFD_SZ, superblock.ufd+cuid*UFD_SZ);
-    int fid_dest = ufd.find(tokens[1]); // ¿´ÊÇ·ñ¸´ÖÆµÄÎÄ¼ş»áÖØÃû
+    int fid_dest = ufd.find(tokens[1]); // çœ‹æ˜¯å¦å¤åˆ¶çš„æ–‡ä»¶ä¼šé‡å
     if (fid_dest >= 0) {
       printf("copy: copy file:%s already exists\n", tokens[1]);
       return;
-    } // ÔÙ¿´Ô´ÎÄ¼şÊÇ·ñ´æÔÚ
+    } // å†çœ‹æºæ–‡ä»¶æ˜¯å¦å­˜åœ¨
     int fid_src = ufd.find(tokens[2]);
     if (fid_src < 0) {
       printf("copy: source file:%s not found\n", tokens[2]);
       return;
-    } // ¿´ÏµÍ³¿Õ¼äÊÇ·ñ×ã¹»
+    } // çœ‹ç³»ç»Ÿç©ºé—´æ˜¯å¦è¶³å¤Ÿ
     int inode_id_src = ufd.files[fid_src].pt;
     Inode inode_src;
     iread(&inode_src, INODE_SZ, superblock.inode+inode_id_src*INODE_SZ);
@@ -347,75 +347,75 @@ void cp() {
       printf("copy: blocks not enough\n");
       return;
     }
-    // Ò»ÇĞok£¬ÏÈ´´½¨Ò»¸ö¿ÕÎÄ¼ş
+    // ä¸€åˆ‡okï¼Œå…ˆåˆ›å»ºä¸€ä¸ªç©ºæ–‡ä»¶
     printf("creating copyfile ...\n");
     createFile();
-    // ÖØĞÂ¶ÁÈ¡Ä¿Â¼
+    // é‡æ–°è¯»å–ç›®å½•
     iread(&ufd, UFD_SZ, superblock.ufd+cuid*UFD_SZ, 0);
     fid_dest = ufd.find(tokens[1]);
     int inode_id_dest = ufd.files[fid_dest].pt;
     Inode inode_dest;
     iread(&inode_dest, INODE_SZ, superblock.inode+inode_id_dest*INODE_SZ, 0);
-    // ¿ªÊ¼¸´ÖÆ
+    // å¼€å§‹å¤åˆ¶
     int i; int block_id = 0;
     for (i = 0; i < inode_src.blocks ; ++i) {
       block_id = newBlock(block_id);
       inode_dest.addr[i] = block_id;
-      // ¶ÁÈ¡Ô´ÎÄ¼ş
+      // è¯»å–æºæ–‡ä»¶
       iread(buf, BLOCK_SZ, inode_src.addr[i]*BLOCK_SZ, 0);
-      // ¿½±´
+      // æ‹·è´
       iwrite(buf, BLOCK_SZ, inode_dest.addr[i]*BLOCK_SZ, 0);
     }
-    // ÉèÖÃÅÌ¿éÄ©Î²
+    // è®¾ç½®ç›˜å—æœ«å°¾
     inode_dest.addr[i] = -1;
     inode_dest.update(inode_src.blocks);
-    // ÏµÍ³¿Õ¼ä±ä»¯£¬Î»Ê¾Í¼±ä»¯£¬i½ÚµãÇø±ä»¯£¬ËùÓĞĞÅÏ¢Ğ´»Ø´ÅÅÌ
+    // ç³»ç»Ÿç©ºé—´å˜åŒ–ï¼Œä½ç¤ºå›¾å˜åŒ–ï¼ŒièŠ‚ç‚¹åŒºå˜åŒ–ï¼Œæ‰€æœ‰ä¿¡æ¯å†™å›ç£ç›˜
     iwrite(bitmap_block, BLOCK_BITMAP_BLOCKS * BLOCK_SZ, superblock.block_bitmap, 0);
     iwrite(&inode_dest, INODE_SZ, superblock.inode+inode_id_dest*INODE_SZ, 0);
     iwrite(&superblock, superblock.sb, BLOCK_SZ);
   }
 }
-// ÎŞÓÃ²âÊÔ
+// æ— ç”¨æµ‹è¯•
 void test(int block_id) {
     memset(buf, 0, sizeof(buf));
     iread(buf, BLOCK_SZ, block_id*BLOCK_SZ);
     puts(buf);
 }
-// Ğ´ÃüÁî£¬Ö»ÄÜÖ¸¶¨Ğ´ÎÄ¼şµÄ´óĞ¡¿éÊı£¬Ã»ÓĞ¾ßÌåÄÚÈİ¡£Ã¿Ò»¿é¶¼ÓÉ²âÊÔ×Ö·û´®´úÌæÌî³ä
+// å†™å‘½ä»¤ï¼Œåªèƒ½æŒ‡å®šå†™æ–‡ä»¶çš„å¤§å°å—æ•°ï¼Œæ²¡æœ‰å…·ä½“å†…å®¹ã€‚æ¯ä¸€å—éƒ½ç”±æµ‹è¯•å­—ç¬¦ä¸²ä»£æ›¿å¡«å……
 void write() {
   if (tokens[1] == NULL || tokens[2] == NULL) {
     printf("write: write filename blocks eg write 1.txt 10\n");
   } else {
-    int sz = -1; // ÏÈ¶ÁÈ¡ÒªĞ´µÄÅÌ¿é´óĞ¡
+    int sz = -1; // å…ˆè¯»å–è¦å†™çš„ç›˜å—å¤§å°
     sscanf(tokens[2], "%d", &sz);
-    // »¹Î´ÊµÏÖ¼äi½ÚµãµÄ½ÓË÷Òı£¬ËùÒÔÒ»¸öÎÄ¼ş×î¶àÖ»ÄÜĞ´10¿é
+    // è¿˜æœªå®ç°é—´ièŠ‚ç‚¹çš„æ¥ç´¢å¼•ï¼Œæ‰€ä»¥ä¸€ä¸ªæ–‡ä»¶æœ€å¤šåªèƒ½å†™10å—
     if (sz == -1 || (sz <= 10 && superblock.block_cap < sz) || sz > 10) {
       printf("write: blocks not enough or lv1+ allocation not implemented\n");
       return;
     }
-    UFD ufd; // ¿´ÒªĞ´µÄÎÄ¼şÊÇ·ñ´æÔÚ
+    UFD ufd; // çœ‹è¦å†™çš„æ–‡ä»¶æ˜¯å¦å­˜åœ¨
     iread(&ufd, UFD_SZ, superblock.ufd+cuid*UFD_SZ);
     int fid = ufd.find(tokens[1]);
     if (fid < 0) {
       printf("write: file not found\n");
       return;
-    } // ¶ÁÈ¡i½Úµã
+    } // è¯»å–ièŠ‚ç‚¹
     int inode_id = ufd.files[fid].pt;
     int block_id = 0;
     int i; Inode new_inode;
     iread(&new_inode, INODE_SZ, superblock.inode+inode_id*INODE_SZ, 0);
-    // ÎÄ¼ş±¾À´¾ÍÓĞÄÚÈİ£¬ÔòÇå¿Õ
+    // æ–‡ä»¶æœ¬æ¥å°±æœ‰å†…å®¹ï¼Œåˆ™æ¸…ç©º
     if (sz < new_inode.sz) deleteBlock(new_inode);
-    // Çå¿ÕºóÖØĞ´
+    // æ¸…ç©ºåé‡å†™
     for (i = 0; i < sz ; ++i) {
       block_id = newBlock(block_id);
       new_inode.addr[i] = block_id;
       iwrite(sample, BLOCK_SZ, block_id*BLOCK_SZ, 0);
     }
-    // ÉèÖÃÅÌ¿é½áÊøÎ»ÖÃ
+    // è®¾ç½®ç›˜å—ç»“æŸä½ç½®
     new_inode.addr[i] = -1;
     new_inode.update(sz);
-    // ±£´æ
+    // ä¿å­˜
     iwrite(bitmap_block, BLOCK_BITMAP_BLOCKS*BLOCK_SZ, superblock.block_bitmap, 0);
     iwrite(&new_inode, INODE_SZ, superblock.inode+inode_id*INODE_SZ, 0);
     iwrite(&superblock, BLOCK_SZ, superblock.sb);
@@ -425,17 +425,17 @@ void read() {
   if (tokens[1] == NULL) {
       printf("read: read filename\n");
   } else {
-    UFD ufd; // ¿´ÎÄ¼şÊÇ·ñ´æÔÚ
+    UFD ufd; // çœ‹æ–‡ä»¶æ˜¯å¦å­˜åœ¨
     iread(&ufd, UFD_SZ, superblock.ufd+cuid*UFD_SZ);
     int fid = ufd.find(tokens[1]);
     if (fid < 0) {
       printf("read: file not found\n");
       return;
-    } // ¶ÁÈ¡i½Úµã
+    } // è¯»å–ièŠ‚ç‚¹
     int inode_id = ufd.files[fid].pt;
     int i; Inode inode;
     iread(&inode, INODE_SZ, superblock.inode+inode_id*INODE_SZ, 0);
-    // ¸ù¾İi½ÚµãÖĞaddrËùÖ¸ÏòµÄÅÌ¿éºÅ£¬¶ÁÈ¡ÅÌ¿éÖĞµÄÄÚÈİ
+    // æ ¹æ®ièŠ‚ç‚¹ä¸­addræ‰€æŒ‡å‘çš„ç›˜å—å·ï¼Œè¯»å–ç›˜å—ä¸­çš„å†…å®¹
     for (i = 0; i < inode.blocks ; ++i) {
       memset(buf, 0, sizeof(buf));
       iread(buf, BLOCK_SZ, inode.addr[i] * BLOCK_SZ, 0);
@@ -444,11 +444,11 @@ void read() {
     iclose();
   }
 }
-// ´¦ÀíÃüÁî
+// å¤„ç†å‘½ä»¤
 void cmdHandler() {
   if (strcmp(tokens[0], "login") == 0) {
     login();
-  } else if (uid == -1) { // Î´µÇÂ½Ê±£¬Ö»ÄÜ¿´ÓĞÄÄĞ©ÓÃ»§
+  } else if (uid == -1) { // æœªç™»é™†æ—¶ï¼Œåªèƒ½çœ‹æœ‰å“ªäº›ç”¨æˆ·
     if (strcmp(tokens[0], "dir") == 0) showDir();
     else printf("no permission\n");
   } else if (strcmp(tokens[0], "dir") == 0) {
@@ -475,7 +475,7 @@ void cmdHandler() {
     info();
   } else printf("cmd: no such command\n");
 }
-// ÍË³ö
+// é€€å‡º
 int leave() {
     if (strcmp(tokens[0], "exit") == 0) {
         printf("goodbye!\n");

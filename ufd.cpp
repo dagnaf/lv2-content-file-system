@@ -1,18 +1,18 @@
-#include <cstring>
+ï»¿#include <cstring>
 #include "disk.h"
 
-// ³õÊ¼»¯µ±Ç°ÎÄ¼şÄ¿Â¼£¬Çå¿ÕËùÓĞÎÄ¼ş
+// åˆå§‹åŒ–å½“å‰æ–‡ä»¶ç›®å½•ï¼Œæ¸…ç©ºæ‰€æœ‰æ–‡ä»¶
 void UFD::init() {
   n = 0;
   for (int i = 0; i < MAX_FILE; ++i) files[i].init("", -1);
 }
-// Ìí¼ÓÎÄ¼ş£º
-// ²ÎÊı1£ºÎÄ¼ş±àºÅÖ¸Õë£¬Ìí¼Ó³É¹¦ÔòÉèÎªĞÂµÄ±àºÅ
-// ²ÎÊı2£ºÌí¼ÓµÄÎÄ¼şÃû
-// ·µ»Ø£º´íÎóĞÅÏ¢
+// æ·»åŠ æ–‡ä»¶ï¼š
+// å‚æ•°1ï¼šæ–‡ä»¶ç¼–å·æŒ‡é’ˆï¼Œæ·»åŠ æˆåŠŸåˆ™è®¾ä¸ºæ–°çš„ç¼–å·
+// å‚æ•°2ï¼šæ·»åŠ çš„æ–‡ä»¶å
+// è¿”å›ï¼šé”™è¯¯ä¿¡æ¯
 int UFD::add(char *s, int type, int permission) {
-  if (n == MAX_FILE) return e_max; // ³¬¹ı×î´óÎÄ¼şÊı
-  if (find(s) >= 0) return e_dup;  // ÎÄ¼şÃûÖØ¸´
+  if (n == MAX_FILE) return e_max; // è¶…è¿‡æœ€å¤§æ–‡ä»¶æ•°
+  if (find(s) >= 0) return e_dup;  // æ–‡ä»¶åé‡å¤
   int new_inode_id = newInode();
   files[newId()].init((const char *)s, new_inode_id);
   Inode new_inode(new_inode_id, type, permission);
@@ -20,25 +20,25 @@ int UFD::add(char *s, int type, int permission) {
   n++;
   return 0;
 }
-// ÉêÇëÒ»¸ö¿ÕµÄÎÄ¼şid
+// ç”³è¯·ä¸€ä¸ªç©ºçš„æ–‡ä»¶id
 int UFD::newId() {
   for (int i = 0; i < MAX_FILE; ++i)
     if (files[i].pt == -1)
       return i;
   return -1;
 }
-// ²éÕÒÎÄ¼ş£º
-// ²ÎÊı£ºÎÄ¼şÃû
-// ·µ»Ø£º -1Î´ÕÒµ½£¬>0ÎÄ¼ş±àºÅ
+// æŸ¥æ‰¾æ–‡ä»¶ï¼š
+// å‚æ•°ï¼šæ–‡ä»¶å
+// è¿”å›ï¼š -1æœªæ‰¾åˆ°ï¼Œ>0æ–‡ä»¶ç¼–å·
 int UFD::find(char *s) {
   for (int i = 0; i < MAX_FILE; ++i)
     if (files[i].pt != -1 && strcmp(files[i].name, s) == 0)
       return i;
   return -1;
 }
-// É¾³ıÎÄ¼ş£º
-// ²ÎÊı£ºÎÄ¼ş±àºÅ
-// Í¬Ê±É¾³ı¶ÔÓ¦µÄi½Úµã£¬ÒÔ¼°i½ÚµãÖĞaddrËùÖ¸ÏòµÄÅÌ¿é
+// åˆ é™¤æ–‡ä»¶ï¼š
+// å‚æ•°ï¼šæ–‡ä»¶ç¼–å·
+// åŒæ—¶åˆ é™¤å¯¹åº”çš„ièŠ‚ç‚¹ï¼Œä»¥åŠièŠ‚ç‚¹ä¸­addræ‰€æŒ‡å‘çš„ç›˜å—
 int UFD::del(char *s) {
   int fid = find(s);
   if (fid == -1) return e_not;

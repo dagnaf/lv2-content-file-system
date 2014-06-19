@@ -1,12 +1,12 @@
-#include <cstring>
+ï»¿#include <cstring>
 #include "disk.h"
-// ³õÊ¼»¯mfd£¬ÉèÖÃadmin£¬ÆäÓàÇå¿Õ
+// åˆå§‹åŒ–mfdï¼Œè®¾ç½®adminï¼Œå…¶ä½™æ¸…ç©º
 void MFD::init() {
   for (int i = 0; i < MAX_USER; ++i) users[i].pt = -1;
   users[0].init("admin", 0);
   n = 1;
 }
-// Ìí¼ÓÓÃ»§£¬Í¬Ê±ÎªÓÃ»§´´½¨Ò»¸öufd
+// æ·»åŠ ç”¨æˆ·ï¼ŒåŒæ—¶ä¸ºç”¨æˆ·åˆ›å»ºä¸€ä¸ªufd
 int MFD::add(char *s) {
   if (n == MAX_USER) return e_max;
   if (find(s) >= 0) return e_dup;
@@ -17,31 +17,31 @@ int MFD::add(char *s) {
   n++;
   return 0;
 }
-// ÉêÇëÒ»¸ö¿ÕµÄÓÃ»§id
+// ç”³è¯·ä¸€ä¸ªç©ºçš„ç”¨æˆ·id
 int MFD::newId() {
   for (int i = 0; i < MAX_FILE; ++i)
     if (users[i].pt == -1)
       return i;
   return -1;
 }
-// ²éÕÒÓÃ»§
+// æŸ¥æ‰¾ç”¨æˆ·
 int MFD::find(char *s) {
   for (int i = 0; i < MAX_USER; ++i)
     if (users[i].pt != -1 && strcmp(s, users[i].name) == 0)
       return i;
     return -1;
 }
-// µÇÂ½
+// ç™»é™†
 int MFD::login(char *s) {
     return find(s);
 }
-// É¾³ıÓÃ»§£¬ÓÃ»§Ä¿Â¼²»¿Õ²»ÄÜÉ¾³ı
+// åˆ é™¤ç”¨æˆ·ï¼Œç”¨æˆ·ç›®å½•ä¸ç©ºä¸èƒ½åˆ é™¤
 int MFD::del(char *s) {
   int uid = find(s);
   if (uid == -1) return e_not;
-  UFD ufd; // ÏÈ¶ÁÈ¡¸ÃÓÃ»§¿Õ¼äµÄÄ¿Â¼
+  UFD ufd; // å…ˆè¯»å–è¯¥ç”¨æˆ·ç©ºé—´çš„ç›®å½•
   iread(&ufd, UFD_SZ, superblock.ufd+uid*UFD_SZ);
-  if (ufd.n > 0) return e_invalid; // Ä¿Â¼²»Îª¿Õ
+  if (ufd.n > 0) return e_invalid; // ç›®å½•ä¸ä¸ºç©º
   users[uid].init("", -1);
   n--;
   return 0;

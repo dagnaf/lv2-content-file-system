@@ -1,21 +1,21 @@
-#include "disk.h"
+ï»¿#include "disk.h"
 
 void SuperBlock::init() {
-  // Ê£ÓàÅÌ¿é
+  // å‰©ä½™ç›˜å—
   block_cap = BLOCKS;
-  // Ê£Óài½Úµã
+  // å‰©ä½™ièŠ‚ç‚¹
   inode_cap = MAX_FILE*MAX_USER;
-  // ³¬¼¶¿éµÄµØÖ·
+  // è¶…çº§å—çš„åœ°å€
   sb = 0;
-  // mfdµÄµØÖ·
+  // mfdçš„åœ°å€
   mfd = BLOCK_SZ;
-  // ufdµÄÊ×µØÖ·
+  // ufdçš„é¦–åœ°å€
   ufd = mfd + BLOCK_SZ * MFD_BLOCKS;
-  // i½ÚµãÇøµÄÊ×µØÖ·
+  // ièŠ‚ç‚¹åŒºçš„é¦–åœ°å€
   inode = ufd + BLOCK_SZ * UFD_BLOCKS;
-  // Î»Ê¾Í¼Ê×µØÖ·
+  // ä½ç¤ºå›¾é¦–åœ°å€
   inode_bitmap = inode + BLOCK_SZ * INODE_BLOCKS;
   block_bitmap = inode_bitmap + BLOCK_SZ * INODE_BITMAP_BLOCKS;
-  // Êı¾İÇøÊ×µØÖ·
+  // æ•°æ®åŒºé¦–åœ°å€
   data = block_bitmap + BLOCK_SZ * BLOCK_BITMAP_BLOCKS;
 }

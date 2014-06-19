@@ -1,14 +1,14 @@
-#ifndef MFD_H_INCLUDED
+ï»¿#ifndef MFD_H_INCLUDED
 #define MFD_H_INCLUDED
 
 #include "filedirectory.h"
 #include "file.h"
-// ÊµÏÖÎÄ¼şÄ¿Â¼¹¦ÄÜ
-// ¾ßÌåºÍUFDÀàËÆ
+// å®ç°æ–‡ä»¶ç›®å½•åŠŸèƒ½
+// å…·ä½“å’ŒUFDç±»ä¼¼
 struct MFD : FileDirectory
 {
-  int n; // µ±Ç°ÓÃ»§Êı
-  File users[MAX_USER]; // ÓÃ»§ÃûºÍÓÃ»§id
+  int n; // å½“å‰ç”¨æˆ·æ•°
+  File users[MAX_USER]; // ç”¨æˆ·åå’Œç”¨æˆ·id
   void init();
   int add(char *s);
   int newId();

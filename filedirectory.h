@@ -1,12 +1,12 @@
-#ifndef FILEDIRECTORY_H_INCLUDED
+ï»¿#ifndef FILEDIRECTORY_H_INCLUDED
 #define FILEDIRECTORY_H_INCLUDED
 
-// Ä¿Â¼½Ó¿Ú
+// ç›®å½•æ¥å£
 struct FileDirectory {
-  virtual void init() = 0; // ³õÊ¼»¯
-  // virtual int add(char *) = 0; // ²»Ìá³«
-  virtual int find(char *) = 0; // ²éÕÒ
-  virtual int del(char *) = 0; // É¾³ı
+  virtual void init() = 0; // åˆå§‹åŒ–
+  // virtual int add(char *) = 0; // ä¸æå€¡
+  virtual int find(char *) = 0; // æŸ¥æ‰¾
+  virtual int del(char *) = 0; // åˆ é™¤
   virtual int newId() = 0;
 };
 

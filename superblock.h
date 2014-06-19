@@ -1,17 +1,17 @@
-#ifndef SUPERBLOCK_H_INCLUDED
+ï»¿#ifndef SUPERBLOCK_H_INCLUDED
 #define SUPERBLOCK_H_INCLUDED
 
 struct SuperBlock {
-  int block_cap; // Ê£ÓàÅÌ¿é
-  int inode_cap; // Ê£Óài½Úµã
-  int sb; // ¸÷¸öÇøÓòÔÚ´ÅÅÌÖĞµÄÊ×µØÖ·
+  int block_cap; // å‰©ä½™ç›˜å—
+  int inode_cap; // å‰©ä½™ièŠ‚ç‚¹
+  int sb; // å„ä¸ªåŒºåŸŸåœ¨ç£ç›˜ä¸­çš„é¦–åœ°å€
   int mfd;
   int ufd;
   int inode;
   int inode_bitmap;
   int block_bitmap;
   int data;
-  void init(); // ³õÊ¼»¯ÉÏÊö±äÁ¿
+  void init(); // åˆå§‹åŒ–ä¸Šè¿°å˜é‡
 };
 
 #endif // SUPERBLOCK_H_INCLUDED

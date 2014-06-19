@@ -1,4 +1,4 @@
-#include <cstring>
+﻿#include <cstring>
 #include "file.h"
 
 void File::init(const char *s, int d) {

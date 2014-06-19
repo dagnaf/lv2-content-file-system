@@ -1,22 +1,22 @@
-#include <ctime>
+ï»¿#include <ctime>
 #include <cstring>
 #include <cstdio>
 #include "inode.h"
 
-// ¿Õ³õÊ¼»¯
+// ç©ºåˆå§‹åŒ–
 Inode::Inode() {}
-// Ò»°ã³õÊ¼»¯
+// ä¸€èˆ¬åˆå§‹åŒ–
 Inode::Inode(int i, int t, int p) {
   uid = i; type = t; permission = p;
   blocks = 0;
   sz = 0;
   link = 0;
-  // ÉèÖÃÎªµ±Ç°Ê±¼ä£¬¼´µ÷ÓÃÊ±¼ä
+  // è®¾ç½®ä¸ºå½“å‰æ—¶é—´ï¼Œå³è°ƒç”¨æ—¶é—´
   time(&create_time);
   time(&modify_time);
   memset(addr, -1, sizeof(addr));
 }
-// ´òÓ¡ĞÅÏ¢
+// æ‰“å°ä¿¡æ¯
 void Inode::print() {
   printf("user id: %d\n", uid);
   printf("type: %d\n", type);
@@ -27,7 +27,7 @@ void Inode::print() {
   printf("create time: %s", ctime(&create_time));
   printf("modify time: %s", ctime(&modify_time));
 }
-// ¸üĞÂ´óĞ¡
+// æ›´æ–°å¤§å°
 void Inode::update(int s) {
   sz = s; blocks = s; time(&modify_time);
   for (int i = s; i < 10; ++i) addr[i] = -1;
