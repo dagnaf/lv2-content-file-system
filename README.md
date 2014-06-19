@@ -1,5 +1,7 @@
 LV2(user & file) Content File System
 
+g++ main.cpp disk.cpp file.cpp inode.cpp mfd.cpp superblock.cpp ufd.cpp
+
 disk size 100M
 block size 1KB
 
